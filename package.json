@@ -12,8 +12,12 @@
   "dependencies": {
     "@tanstack/react-query": "^4.33.0",
     "firebase": "^10.3.1",
+    "lottie-react": "^2.4.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-hook-form": "^7.46.1",
+    "react-icons": "^4.11.0",
+    "sweetalert2": "^11.7.27"
   },
   "devDependencies": {
     "@reduxjs/toolkit": "^1.9.5",
