@@ -47,11 +47,16 @@ const groupTaskSlice = createSlice({
             })
         },
         taskStatusChanged: (state, action) => {
-            const { id, status } = action.payload;
-            changeTaskStatus(id, status)
+            const { groupId, messageId, status } = action.payload;
+            changeTaskStatus(groupId, messageId, status)
             state.groups.map(group => {
-                if (group.id === id) {
-                    return group.message.status = status
+                if (group.id === groupId) {
+                    return group.message.map(message => {
+                        if (message.messageId === messageId) {
+                            return message.status = status
+                        }
+                        return message
+                    })
                 }
                 return group
             })

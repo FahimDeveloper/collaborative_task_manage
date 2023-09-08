@@ -45,8 +45,8 @@ const SideBar = () => {
                                         <Link
                                             key={group.id}
                                             to={`/groups/${group.id}`}
-                                            className="text-base outline outline-2 rounded-md py-1 px-5 outline-secondary"
-                                        >{group.groupName}</Link>
+                                            className="text-base outline outline-2 rounded-md py-1 px-5 outline-secondary flex gap-2 items-center"
+                                        ><img src={group.groupImage} className='w-12 h-12 object-cover rounded-full' alt="" />{group.groupName}</Link>
                                     )
                                 : <p>You haven't any groups</p>
                         }
@@ -60,8 +60,8 @@ const SideBar = () => {
                                         <Link
                                             key={group.id}
                                             to={`/groups/${group.id}`}
-                                            className="text-base outline outline-2 rounded-md py-1 px-5 outline-secondary"
-                                        >{group.groupName}</Link>
+                                            className="text-base outline outline-2 rounded-md py-1 px-5 outline-secondary flex gap-2 items-center"
+                                        ><img src={group.groupImage} className='w-12 h-12 object-cover rounded-full' alt="" />{group.groupName}</Link>
                                     )
                                 : <p>You are not joined any groups</p>
                         }

@@ -23,7 +23,7 @@ const ModalForCrTask = ({ isOpenForTask, closeModalForTask, group }) => {
         closeModalForTask();
         reset();
         const message = {
-            taskId: taskId,
+            messageId: crypto.randomUUID(),
             task: data.taskName,
             date: data.date,
             priority: data.taskPriority,

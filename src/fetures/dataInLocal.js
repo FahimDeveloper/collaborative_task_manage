@@ -39,15 +39,21 @@ export const addMessageInGroup = (id, message) => {
     localStorage.setItem("groups", JSON.stringify(groups))
 }
 
-export const changeTaskStatus = (id, status) => {
-    const tasks = getTasksArr();
-    tasks.map(group => {
-        if (group.id === id) {
-            return group.status = status
+export const changeTaskStatus = (groupId, messageId, status) => {
+    const groups = getGroupsArr();
+    groups.map(group => {
+        if (group.id === groupId) {
+            return group.message.map(message => {
+                if (message.messageId === messageId) {
+                    console.log(message)
+                    return message.status = status
+                }
+                return message
+            })
         }
         return group
-    });
-    localStorage.setItem("tasks", JSON.stringify(tasks))
+    })
+    localStorage.setItem("groups", JSON.stringify(groups))
 }
 
 

@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { useEffect, useState } from "react";
 import ModalForCrTask from "./ModalForCrTask";
 import { useNavigate, useParams } from "react-router-dom";
@@ -27,7 +28,7 @@ const GroupPage = () => {
         dispatch(catchUsers())
     }, [dispatch])
     const group = groups.find(group => group.id === groupId) || {}
-    const { groupAdmin, groupName, message } = group;
+    const { id, groupAdmin, groupName, message } = group;
     const myTask = message?.filter(message => message.taskFor === user?.email);
     let [isOpenForTask, setIsOpenForTask] = useState(false)
     let [isOpenForInvite, setIsOpenForInvite] = useState(false)
@@ -76,8 +77,8 @@ const GroupPage = () => {
                 return message
         }
     }
-    const handleTaskStatusChanged = (id, status) => {
-        dispatch(taskStatusChanged({ id, status }))
+    const handleTaskStatusChanged = (groupId, messageId, status) => {
+        dispatch(taskStatusChanged({ groupId, messageId, status }))
     }
     return (
         <div className="container mx-auto">
@@ -87,8 +88,8 @@ const GroupPage = () => {
                     <div className="flex items-center gap-5">
                         <FiPhoneCall className="text-2xl" />
                         <BsCameraVideo className="text-2xl" />
-                        {groupAdmin === user?.email && <button onClick={openModalForInvite} className="btn btn-primary"><AiOutlineUsergroupAdd />Invite users</button>}
-                        <button onClick={openModalForTask} className="btn btn-primary">add task</button>
+                        {groupAdmin === user?.email && <button onClick={openModalForTask} className="btn btn-primary">add task</button>}
+                        <button onClick={openModalForInvite} className="btn btn-primary"><AiOutlineUsergroupAdd />Invite users</button>
                     </div>
                 </div>
             </nav>
@@ -109,7 +110,7 @@ const GroupPage = () => {
                                     <option value="completed">Completed</option>
                                 </select>
                             </div>
-                            {
+                            {message.length > 0 ?
                                 message.filter(statusFilter).map((message, index) => {
                                     return (
                                         <div key={index} className={`p-5 border ${groupAdmin === user?.email ? "ml-auto" : "mr-auto"} rounded-xl 2xl:w-2/5 xl:w-1/2 sm:w-3/5 w-4/5 bg-lime-50`}>
@@ -120,6 +121,7 @@ const GroupPage = () => {
                                         </div>
                                     )
                                 })
+                                : <p className="flex justify-center items-center text-2xl font-semibold">This Chanel haven't any task</p>
                             }
                         </div>
                     </TabPanel>
@@ -134,7 +136,7 @@ const GroupPage = () => {
                                     <option value="Top Priority">Top Priority</option>
                                 </select>
                             </div>
-                            {
+                            {myTask.length > 0 ?
                                 myTask.filter(priorityFilter).map((message, index) => {
                                     return (
                                         <div key={index} className={`p-5 border flex justify-between ${groupAdmin === user?.email ? "ml-auto" : "mr-auto"} rounded-xl 2xl:w-2/5 xl:w-1/2 sm:w-3/5 w-4/5  bg-lime-50`}>
@@ -143,14 +145,15 @@ const GroupPage = () => {
                                                 <p className="text-lg font-medium">Taks Priority : {message.priority}</p>
                                                 <p className="text-lg font-medium">Task For : {message.taskFor}</p>
                                             </div>
-                                            <select onChange={(e) => handleTaskStatusChanged(message.taskId, e.target.value)} defaultValue={message.status} disabled={message.status === "completed"} className='select select-bordered max-w-md'>
-                                                <option value="procces">Progress</option>
+                                            <select onChange={(e) => handleTaskStatusChanged(id, message.messageId, e.target.value)} defaultValue={message.status} disabled={message.status === "completed"} className='select select-bordered max-w-md'>
+                                                <option value="progress">Progress</option>
                                                 <option value="pending">Pending</option>
                                                 <option value="completed">Completed</option>
                                             </select>
                                         </div>
                                     )
                                 })
+                                : <p className="flex justify-center items-center text-2xl font-semibold">This Chanel haven't any task for you</p>
                             }
                         </div>
                     </TabPanel>
