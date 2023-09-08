@@ -1,22 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { addTask, createGroup, getGroupsArr, getTasksArr } from "../dataInLocal";
+import { addTask, addUserInGroup, createGroup, getGroupsArr, getTasksArr } from "../dataInLocal";
 
 const initialState = {
     groups: [],
-    tasks: []
+    tasks: [],
+    groupData: {}
 }
 
 const groupTaskSlice = createSlice({
     name: "groupTasks",
     initialState,
     reducers: {
-        newGroup: (state, data) => {
-            createGroup(data),
-                state.groups.push(data)
+        newGroup: (state, action) => {
+            createGroup(action.payload);
+            state.groups.push(action.payload)
         },
-        catchGroup: (state) => {
-            const group = getGroupsArr();
-            state.groups.push(group)
+        catchGroups: (state) => {
+            const groups = getGroupsArr();
+            state.groups = groups
         },
         catchTasks: (state) => {
             const tasks = getTasksArr();
@@ -25,10 +26,20 @@ const groupTaskSlice = createSlice({
         createTask: (state, action) => {
             addTask(action.payload);
             state.tasks.push(action.payload)
+        },
+        addMembarInGroup: (state, action) => {
+            const { groupId, user } = action.payload
+            addUserInGroup(groupId, user);
+            state.groups.map(group => {
+                if (group.id === groupId) {
+                    return group.users.push(user)
+                }
+                return group
+            })
         }
     }
 
 });
 
-export const { newGroup, catchGroup, catchTasks, createTask } = groupTaskSlice.actions;
+export const { newGroup, catchGroups, catchTasks, createTask, addMembarInGroup } = groupTaskSlice.actions;
 export default groupTaskSlice.reducer;

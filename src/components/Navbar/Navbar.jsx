@@ -4,15 +4,15 @@ import RootContainer from "../RootContainer";
 
 
 const Navbar = () => {
-    const { user } = useAuth();
+    const { user, logOut } = useAuth();
     return (
-        <nav className="py-3 shadow-md">
+        <nav className="py-3 shadow-md fixed z-50 bg-white w-full">
             <RootContainer>
                 <div className="flex justify-between">
                     <h3 className="italic text-3xl font-bold">Task Manage</h3>
                     {
                         user
-                            ? <button className="btn btn-primary px-10">add task</button>
+                            ? <button onClick={logOut} className="btn btn-primary px-10">Log Out</button>
                             : <Link to="/login"><button className="btn btn-primary px-10">Login</button></Link>}
                 </div>
             </RootContainer>

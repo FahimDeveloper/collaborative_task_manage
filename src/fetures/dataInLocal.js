@@ -19,6 +19,15 @@ export const createGroup = (data) => {
     localStorage.setItem("groups", JSON.stringify(newGroupsArr));
 }
 
+export const addUserInGroup = (id, user) => {
+    const groups = getGroupsArr();
+    const findGroup = groups.find(group => group.id === id);
+    findGroup.users.push(user)
+    const filterGroup = groups.filter(group => group.id !== id);
+    const newGroupArr = [...filterGroup, findGroup];
+    console.log(newGroupArr)
+    localStorage.setItem("groups", JSON.stringify(newGroupArr))
+}
 
 
 
