@@ -4,6 +4,7 @@ import { addMessageInGroup, addTask, addUserInGroup, createGroup, getGroupsArr, 
 const initialState = {
     groups: [],
     tasks: [],
+    taskStatus: "pending"
 }
 
 const groupTaskSlice = createSlice({
@@ -45,10 +46,13 @@ const groupTaskSlice = createSlice({
                 }
                 return group
             })
-        }
+        },
+        taskStatusChanged: (state, action) => {
+            state.status = action.payload
+        },
     }
 
 });
 
-export const { newGroup, catchGroups, catchTasks, createTask, addMembarInGroup, addMessage } = groupTaskSlice.actions;
+export const { newGroup, catchGroups, catchTasks, createTask, addMembarInGroup, addMessage, taskStatusChanged } = groupTaskSlice.actions;
 export default groupTaskSlice.reducer;

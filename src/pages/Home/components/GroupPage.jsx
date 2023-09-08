@@ -10,14 +10,16 @@ import { catchUsers } from "../../../fetures/users/usersSlice";
 import useAuth from "../../../hooks/useAuth";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import { changeStatus } from "../../../fetures/taksFilters/taskFiltersSlice";
 
 
 const GroupPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const { groupId } = useParams();
-    const { groups } = useSelector(state => state.groupTasks);
+    const { groups, taskStatus } = useSelector(state => state.groupTasks);
     const { users } = useSelector(state => state.usersData);
+    const { status, priority } = useSelector(state => state.filters)
     const filterData = users.filter(everyUser => everyUser.email !== user?.email)
     const dispatch = useDispatch();
     useEffect(() => {
@@ -43,6 +45,33 @@ const GroupPage = () => {
     if (!groupName) {
         return navigate("/")
     }
+    const handleStatusChange = (status) => {
+        dispatch(changeStatus(status))
+    }
+    const statusFilter = (message) => {
+        switch (status) {
+            case "pending":
+                return message.status === "pending"
+            case "progress":
+                return message.status === "progress"
+            case "completed":
+                return message.status === "completed"
+            default:
+                return message
+        }
+    }
+    const priorityFilter = (message) => {
+        switch (priority) {
+            case "Most Priority":
+                return message.status === "Most Priority"
+            case "High Priority":
+                return message.status === "High Priority"
+            case "Top Priority":
+                return message.status === "Top Priority"
+            default:
+                return message
+        }
+    }
     return (
         <div className="container mx-auto">
             <nav className="absolute top-20 w-full left-0 px-5">
@@ -51,8 +80,8 @@ const GroupPage = () => {
                     <div className="flex items-center gap-5">
                         <FiPhoneCall className="text-2xl" />
                         <BsCameraVideo className="text-2xl" />
-                        {groupAdmin === user?.email && <><button onClick={openModalForInvite} className="btn btn-primary"><AiOutlineUsergroupAdd />Invite users</button>
-                            <button onClick={openModalForTask} className="btn btn-primary">add task</button></>}
+                        {groupAdmin === user?.email && <button onClick={openModalForInvite} className="btn btn-primary"><AiOutlineUsergroupAdd />Invite users</button>}
+                        <button onClick={openModalForTask} className="btn btn-primary">add task</button>
                     </div>
                 </div>
             </nav>
@@ -63,11 +92,20 @@ const GroupPage = () => {
                         <Tab>My Task</Tab>
                     </TabList>
                     <TabPanel>
-                        <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
+                        <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto relative">
+                            <div className="text-end">
+                                <p>Filter By</p>
+                                <select onChange={(e) => handleStatusChange(e.target.value)} className='select select-bordered w-52'>
+                                    <option value="defult">Default</option>
+                                    <option value="progress">Progress</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="completed">Completed</option>
+                                </select>
+                            </div>
                             {
-                                message.map((message, index) => {
+                                message.filter(statusFilter).map((message, index) => {
                                     return (
-                                        <div key={index} className={`p-5 border ${groupAdmin === user?.email ? "ml-auto" : "mr-auto"} rounded-xl 2xl:w-2/5 xl:w-1/2 sm:w-3/5 w-4/5  bg-lime-50`}>
+                                        <div key={index} className={`p-5 border ${groupAdmin === user?.email ? "ml-auto" : "mr-auto"} rounded-xl 2xl:w-2/5 xl:w-1/2 sm:w-3/5 w-4/5 bg-lime-50`}>
                                             <p className="text-lg font-medium">Task name : {message.task}</p>
                                             <p className="text-lg font-medium">Taks Priority : {message.priority}</p>
                                             <p className="text-lg font-medium">Task For : {message.taskFor}</p>
@@ -80,8 +118,17 @@ const GroupPage = () => {
                     </TabPanel>
                     <TabPanel>
                         <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
+                            <div className="text-start">
+                                <p>Filter By</p>
+                                <select className='select select-bordered w-52'>
+                                    <option value="defult">Default</option>
+                                    <option value="Most Priority">Most Critical</option>
+                                    <option value="High Priority">High Priority</option>
+                                    <option value="Top Priority">Top Priority</option>
+                                </select>
+                            </div>
                             {
-                                myTask.map((message, index) => {
+                                myTask.filter(priorityFilter).map((message, index) => {
                                     return (
                                         <div key={index} className={`p-5 border flex justify-between ${groupAdmin === user?.email ? "ml-auto" : "mr-auto"} rounded-xl 2xl:w-2/5 xl:w-1/2 sm:w-3/5 w-4/5  bg-lime-50`}>
                                             <div>
@@ -102,10 +149,6 @@ const GroupPage = () => {
                     </TabPanel>
                 </Tabs>
             </div>
-            {/* <form className="flex absolute bottom-2 w-full left-0 px-5">
-                <input type="text" placeholder="Type here" className="input input-bordered w-full" />
-                <button className="btn btn-primary px-10">send</button>
-            </form> */}
             <ModalForInvUsers isOpenForInvite={isOpenForInvite} closeModalForInvite={closeModalForInvite} group={group} usersData={filterData} />
             <ModalForCrTask isOpenForTask={isOpenForTask} closeModalForTask={closeModalForTask} group={group} />
         </div>

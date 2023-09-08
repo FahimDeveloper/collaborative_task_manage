@@ -23,6 +23,7 @@ const ModalForCrTask = ({ isOpenForTask, closeModalForTask, group }) => {
         reset();
         const message = {
             task: data.taskName,
+            date: data.date,
             priority: data.taskPriority,
             taskFor: data.taskFor,
             status: "pending"
