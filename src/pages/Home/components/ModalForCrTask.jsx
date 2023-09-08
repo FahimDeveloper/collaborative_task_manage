@@ -14,7 +14,8 @@ const ModalForCrTask = ({ isOpenForTask, closeModalForTask, group }) => {
         formState: { errors },
     } = useForm();
     const onSubmit = (data) => {
-        data.id = crypto.randomUUID();
+        const taskId = crypto.randomUUID()
+        data.id = taskId;
         data.state = "pending";
         data.groupName = groupName;
         data.groupAdmin = groupAdmin;
@@ -22,6 +23,7 @@ const ModalForCrTask = ({ isOpenForTask, closeModalForTask, group }) => {
         closeModalForTask();
         reset();
         const message = {
+            taskId: taskId,
             task: data.taskName,
             date: data.date,
             priority: data.taskPriority,
@@ -100,7 +102,7 @@ const ModalForCrTask = ({ isOpenForTask, closeModalForTask, group }) => {
                                             <label htmlFor="taskPriority">Task priority</label>
                                             <select className='select select-bordered w-full' id="taskPriority" {...register('taskPriority', { required: true })}>
                                                 <option value="">Select task priority</option>
-                                                <option value="Most Critical">Most Critical</option>
+                                                <option value="Most Priority">Most Priority</option>
                                                 <option value="High Priority">High Priority</option>
                                                 <option value="Top Priority">Top Priority</option>
                                             </select>

@@ -1,10 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { addMessageInGroup, addTask, addUserInGroup, createGroup, getGroupsArr, getTasksArr } from "../dataInLocal";
+import { addMessageInGroup, addTask, addUserInGroup, changeTaskStatus, createGroup, getGroupsArr, getTasksArr } from "../dataInLocal";
 
 const initialState = {
     groups: [],
     tasks: [],
-    taskStatus: "pending"
 }
 
 const groupTaskSlice = createSlice({
@@ -48,7 +47,14 @@ const groupTaskSlice = createSlice({
             })
         },
         taskStatusChanged: (state, action) => {
-            state.status = action.payload
+            const { id, status } = action.payload;
+            changeTaskStatus(id, status)
+            state.groups.map(group => {
+                if (group.id === id) {
+                    return group.message.status = status
+                }
+                return group
+            })
         },
     }
 

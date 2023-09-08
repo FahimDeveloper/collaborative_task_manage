@@ -10,14 +10,15 @@ import { catchUsers } from "../../../fetures/users/usersSlice";
 import useAuth from "../../../hooks/useAuth";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import { changeStatus } from "../../../fetures/taksFilters/taskFiltersSlice";
+import { changePriority, changeStatus } from "../../../fetures/taksFilters/taskFiltersSlice";
+import { taskStatusChanged } from "../../../fetures/groupTasks/groupTasksSlice";
 
 
 const GroupPage = () => {
     const { user } = useAuth();
     const navigate = useNavigate();
     const { groupId } = useParams();
-    const { groups, taskStatus } = useSelector(state => state.groupTasks);
+    const { groups } = useSelector(state => state.groupTasks);
     const { users } = useSelector(state => state.usersData);
     const { status, priority } = useSelector(state => state.filters)
     const filterData = users.filter(everyUser => everyUser.email !== user?.email)
@@ -48,6 +49,9 @@ const GroupPage = () => {
     const handleStatusChange = (status) => {
         dispatch(changeStatus(status))
     }
+    const handlePriorityChange = (priority) => {
+        dispatch(changePriority(priority))
+    }
     const statusFilter = (message) => {
         switch (status) {
             case "pending":
@@ -63,14 +67,17 @@ const GroupPage = () => {
     const priorityFilter = (message) => {
         switch (priority) {
             case "Most Priority":
-                return message.status === "Most Priority"
+                return message.priority === "Most Priority"
             case "High Priority":
-                return message.status === "High Priority"
+                return message.priority === "High Priority"
             case "Top Priority":
-                return message.status === "Top Priority"
+                return message.priority === "Top Priority"
             default:
                 return message
         }
+    }
+    const handleTaskStatusChanged = (id, status) => {
+        dispatch(taskStatusChanged({ id, status }))
     }
     return (
         <div className="container mx-auto">
@@ -120,9 +127,9 @@ const GroupPage = () => {
                         <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
                             <div className="text-start">
                                 <p>Filter By</p>
-                                <select className='select select-bordered w-52'>
+                                <select onChange={(e) => handlePriorityChange(e.target.value)} className='select select-bordered w-52'>
                                     <option value="defult">Default</option>
-                                    <option value="Most Priority">Most Critical</option>
+                                    <option value="Most Priority">Most Priority</option>
                                     <option value="High Priority">High Priority</option>
                                     <option value="Top Priority">Top Priority</option>
                                 </select>
@@ -136,7 +143,7 @@ const GroupPage = () => {
                                                 <p className="text-lg font-medium">Taks Priority : {message.priority}</p>
                                                 <p className="text-lg font-medium">Task For : {message.taskFor}</p>
                                             </div>
-                                            <select defaultValue={message.status} disabled={message.status === "completed"} className='select select-bordered max-w-md'>
+                                            <select onChange={(e) => handleTaskStatusChanged(message.taskId, e.target.value)} defaultValue={message.status} disabled={message.status === "completed"} className='select select-bordered max-w-md'>
                                                 <option value="procces">Progress</option>
                                                 <option value="pending">Pending</option>
                                                 <option value="completed">Completed</option>

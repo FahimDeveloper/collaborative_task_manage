@@ -25,7 +25,6 @@ export const addUserInGroup = (id, user) => {
     findGroup.users.push(user)
     const filterGroup = groups.filter(group => group.id !== id);
     const newGroupArr = [...filterGroup, findGroup];
-    console.log(newGroupArr)
     localStorage.setItem("groups", JSON.stringify(newGroupArr))
 }
 
@@ -40,6 +39,16 @@ export const addMessageInGroup = (id, message) => {
     localStorage.setItem("groups", JSON.stringify(groups))
 }
 
+export const changeTaskStatus = (id, status) => {
+    const tasks = getTasksArr();
+    tasks.map(group => {
+        if (group.id === id) {
+            return group.status = status
+        }
+        return group
+    });
+    localStorage.setItem("tasks", JSON.stringify(tasks))
+}
 
 
 // get from local storage
