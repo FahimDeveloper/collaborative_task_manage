@@ -29,6 +29,17 @@ export const addUserInGroup = (id, user) => {
     localStorage.setItem("groups", JSON.stringify(newGroupArr))
 }
 
+export const addMessageInGroup = (id, message) => {
+    const groups = getGroupsArr();
+    groups.map(group => {
+        if (group.id === id) {
+            return group.message.push(message)
+        }
+        return group
+    });
+    localStorage.setItem("groups", JSON.stringify(groups))
+}
+
 
 
 // get from local storage

@@ -1,10 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { addTask, addUserInGroup, createGroup, getGroupsArr, getTasksArr } from "../dataInLocal";
+import { addMessageInGroup, addTask, addUserInGroup, createGroup, getGroupsArr, getTasksArr } from "../dataInLocal";
 
 const initialState = {
     groups: [],
     tasks: [],
-    groupData: {}
 }
 
 const groupTaskSlice = createSlice({
@@ -36,10 +35,20 @@ const groupTaskSlice = createSlice({
                 }
                 return group
             })
+        },
+        addMessage: (state, action) => {
+            const { id, message } = action.payload;
+            addMessageInGroup(id, message)
+            state.groups.map(group => {
+                if (group.id === id) {
+                    return group.message.push(message)
+                }
+                return group
+            })
         }
     }
 
 });
 
-export const { newGroup, catchGroups, catchTasks, createTask, addMembarInGroup } = groupTaskSlice.actions;
+export const { newGroup, catchGroups, catchTasks, createTask, addMembarInGroup, addMessage } = groupTaskSlice.actions;
 export default groupTaskSlice.reducer;

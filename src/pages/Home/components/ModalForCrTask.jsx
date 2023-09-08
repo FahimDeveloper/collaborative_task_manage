@@ -2,9 +2,10 @@ import { Dialog, Transition } from '@headlessui/react'
 import { Fragment } from 'react'
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
-import { createTask } from '../../../fetures/groupTasks/groupTasksSlice';
+import { addMessage, createTask } from '../../../fetures/groupTasks/groupTasksSlice';
 
-const ModalForCrTask = ({ isOpenForTask, closeModalForTask, groupName, groupAdmin }) => {
+const ModalForCrTask = ({ isOpenForTask, closeModalForTask, group }) => {
+    const { id, groupName, groupAdmin, users } = group;
     const dispatch = useDispatch();
     const {
         register,
@@ -14,12 +15,19 @@ const ModalForCrTask = ({ isOpenForTask, closeModalForTask, groupName, groupAdmi
     } = useForm();
     const onSubmit = (data) => {
         data.id = crypto.randomUUID();
-        data.state = "pending"
+        data.state = "pending";
         data.groupName = groupName;
         data.groupAdmin = groupAdmin;
         dispatch(createTask(data))
         closeModalForTask();
         reset();
+        const message = {
+            task: data.taskName,
+            priority: data.taskPriority,
+            taskFor: data.taskFor,
+            status: "pending"
+        }
+        dispatch(addMessage({ id, message }))
     };
 
     return (
@@ -71,9 +79,9 @@ const ModalForCrTask = ({ isOpenForTask, closeModalForTask, groupName, groupAdmi
                                             <label htmlFor="taskFor">TaskFor</label>
                                             <select className='select select-bordered w-full' id="taskFor" {...register('taskFor', { required: true })}>
                                                 <option value="">Select task for</option>
-                                                <option value="For web development">For web development</option>
-                                                <option value="For UI/UX">For UI/UX</option>
-                                                <option value="For marketing">For marketing</option>
+                                                {
+                                                    users.map((user, index) => <option key={index} value={user.email}>{user.name}</option>)
+                                                }
                                             </select>
                                             {errors.taskFor && <span className='text-red-500'>This field is required</span>}
                                         </div>
@@ -91,9 +99,9 @@ const ModalForCrTask = ({ isOpenForTask, closeModalForTask, groupName, groupAdmi
                                             <label htmlFor="taskPriority">Task priority</label>
                                             <select className='select select-bordered w-full' id="taskPriority" {...register('taskPriority', { required: true })}>
                                                 <option value="">Select task priority</option>
-                                                <option value="For web development">For web development</option>
-                                                <option value="For UI/UX">For UI/UX</option>
-                                                <option value="For marketing">For marketing</option>
+                                                <option value="Most Critical">Most Critical</option>
+                                                <option value="High Priority">High Priority</option>
+                                                <option value="Top Priority">Top Priority</option>
                                             </select>
                                             {errors.taskPriority && <span className='text-red-500'>This field is required</span>}
                                         </div>

@@ -8,6 +8,8 @@ import { BsCameraVideo } from 'react-icons/bs';
 import ModalForInvUsers from "./ModalForInvUsers";
 import { catchUsers } from "../../../fetures/users/usersSlice";
 import useAuth from "../../../hooks/useAuth";
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
 
 
 const GroupPage = () => {
@@ -22,7 +24,8 @@ const GroupPage = () => {
         dispatch(catchUsers())
     }, [dispatch])
     const group = groups.find(group => group.id === groupId) || {}
-    const { groupName } = group
+    const { groupAdmin, groupName, message } = group;
+    const myTask = message?.filter(message => message.taskFor === user?.email);
     let [isOpenForTask, setIsOpenForTask] = useState(false)
     let [isOpenForInvite, setIsOpenForInvite] = useState(false)
     function closeModalForTask() {
@@ -48,19 +51,63 @@ const GroupPage = () => {
                     <div className="flex items-center gap-5">
                         <FiPhoneCall className="text-2xl" />
                         <BsCameraVideo className="text-2xl" />
-                        <button onClick={openModalForInvite} className="btn btn-primary"><AiOutlineUsergroupAdd />Invite users</button>
-                        <button onClick={openModalForTask} className="btn btn-primary">add task</button>
+                        {groupAdmin === user?.email && <><button onClick={openModalForInvite} className="btn btn-primary"><AiOutlineUsergroupAdd />Invite users</button>
+                            <button onClick={openModalForTask} className="btn btn-primary">add task</button></>}
                     </div>
                 </div>
             </nav>
-            <div>
+            <div className="w-full absolute top-36 left-0 px-5">
+                <Tabs>
+                    <TabList className={`react-tabs__tab-list text-center`}>
+                        <Tab>All Task</Tab>
+                        <Tab>My Task</Tab>
+                    </TabList>
+                    <TabPanel>
+                        <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
+                            {
+                                message.map((message, index) => {
+                                    return (
+                                        <div key={index} className={`p-5 border ${groupAdmin === user?.email ? "ml-auto" : "mr-auto"} rounded-xl 2xl:w-2/5 xl:w-1/2 sm:w-3/5 w-4/5  bg-lime-50`}>
+                                            <p className="text-lg font-medium">Task name : {message.task}</p>
+                                            <p className="text-lg font-medium">Taks Priority : {message.priority}</p>
+                                            <p className="text-lg font-medium">Task For : {message.taskFor}</p>
+                                            <p className="text-lg font-medium">Task Status : <span className={`bg-warning px-2 py-1 rounded`}>{message.status}</span></p>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    </TabPanel>
+                    <TabPanel>
+                        <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto">
+                            {
+                                myTask.map((message, index) => {
+                                    return (
+                                        <div key={index} className={`p-5 border flex justify-between ${groupAdmin === user?.email ? "ml-auto" : "mr-auto"} rounded-xl 2xl:w-2/5 xl:w-1/2 sm:w-3/5 w-4/5  bg-lime-50`}>
+                                            <div>
+                                                <p className="text-lg font-medium">Task name : {message.task}</p>
+                                                <p className="text-lg font-medium">Taks Priority : {message.priority}</p>
+                                                <p className="text-lg font-medium">Task For : {message.taskFor}</p>
+                                            </div>
+                                            <select defaultValue={message.status} disabled={message.status === "completed"} className='select select-bordered max-w-md'>
+                                                <option value="procces">Progress</option>
+                                                <option value="pending">Pending</option>
+                                                <option value="completed">Completed</option>
+                                            </select>
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                    </TabPanel>
+                </Tabs>
             </div>
-            <form className="flex absolute bottom-2 w-full left-0 px-5">
+            {/* <form className="flex absolute bottom-2 w-full left-0 px-5">
                 <input type="text" placeholder="Type here" className="input input-bordered w-full" />
                 <button className="btn btn-primary px-10">send</button>
-            </form>
+            </form> */}
             <ModalForInvUsers isOpenForInvite={isOpenForInvite} closeModalForInvite={closeModalForInvite} group={group} usersData={filterData} />
-            <ModalForCrTask isOpenForTask={isOpenForTask} closeModalForTask={closeModalForTask} />
+            <ModalForCrTask isOpenForTask={isOpenForTask} closeModalForTask={closeModalForTask} group={group} />
         </div>
     );
 };
